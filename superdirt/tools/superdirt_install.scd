@@ -1,8 +1,19 @@
 (
-var finish;
+var finish, writeSuccessMarker;
+
+writeSuccessMarker = {
+    var markerPath = "SUPERDIRT_CHOCO_SUCCESS_MARKER".getenv;
+
+    if (markerPath.notNil) {
+        File.use(markerPath, "w", { |file|
+            file.write("ok");
+        });
+    };
+};
 
 finish = {
     if (Quarks.isInstalled("SuperDirt")) {
+        writeSuccessMarker.value;
         "SuperDirt 1.7.4 installed successfully.".postln;
         0.exit;
     } {

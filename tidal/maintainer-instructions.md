@@ -1,80 +1,141 @@
-Instructions and explanation for how to make updates to the TidalCycles Chocolatey Package.  
-*Pre-requisite:* You must be a "maintainer" of the TidalCycles package in Chocolatey. 
-  - register for a Chocolatey account
-  - any of the existing maintainers can add you as maintainer
+Instructions and explanation for how to make updates to the TidalCycles Chocolatey Package.
 
 ## Overview
-Maintenance of the Chocolatey TidalCycles package includes any changes needed to the current package version and adding new versions.
-It also includes coordinating any work needed to update the package dependencies. Making changes to a package includes updating the files in this repo as needed, clone the repo to your Windows env, run the `choco` commands to create a package, test/validate the package, and push it up to the chocolatey environment. Typically, the choco commands are run from a local Windows environment - a VM is helpful as validation may need to be run multiple times. It may be possible to do this from Linux or MacOS - see the user docs. 
 
-Documentation: https://docs.chocolatey.org/en-us/create/
-- see the Quick Guide, but note that some important command line details and options are not covered
+The repository now contains the TidalCycles meta-package plus local package definitions for the Windows components that are stale in Chocolatey Community:
 
-## Details - files to edit
-1. tidal.nuspec
-This is a required configuration file. To update, change the version # and any other details. 
-  - version: The dependency list includes version numbers. The version has to be a version that is available in Chocolatey, which may not be the latest. For example: SuperCollider 3.12.1 is listed even though it is several years old, because it is what is available as a package in choco. 
-  - see [Microsoft NuGet Package Version](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning#Specifying-Version-Ranges-in-.nuspec-Files) specification. Note the detail on Version Range syntax. 
+- `supercollider` — SuperCollider 3.14.1
+- `sc3plugins` — sc3-plugins 3.14.0
+- `superdirt` — SuperDirt 1.7.4
+- `tidal` — TidalCycles 1.10.3 meta-package
 
-2. tools/chocolateyinstall.ps1
-This powershell script is run **after** all of the dependencies packages are installed - choco will manage each of them with powershell commands. The main purpose of this script is to do any final install or configuration tasks that are not accomplished by the dependency package. Tasks in this script:
-  - run the tools/quarkinstall.sc file from `sclang` to install SuperDirt, Dirt-Samples, and Vowel quark
-  - install Tidal with `cabal` commands
-  - use Pulsar's package manager (`ppm`) to install the TidalCycles package for Pulsar
-  - manage additional environment variables needed for the install and post install
-  - Provide instructions back to the user (note these may not get to the user if there is a script failure, depending on where it fails)
+The component packages are kept separate because Chocolatey dependencies are resolved by package ID. During local testing, all generated `.nupkg` files must therefore be available from the same local source before installing `TidalCycles`.
 
-3. tools/quarkinstall.sc
-Contains the commands run by SuperCollider (sclang) to install SuperDirt and quarks.
+Chocolatey package documentation: https://docs.chocolatey.org/en-us/create/
 
-## Details - Package creation
-Quick Start Guide: https://docs.chocolatey.org/en-us/create/create-packages-quick-start
+## Package layout
 
-Below are the steps needed to create a new version of the Tidalcycles chocolatey package:
-From Windows Powershell (with choco and git installed):
-1. create a choco build dir (name it whatever); cd to it
-2. Clone this repo
-3. In Powershell, `cd` to the tidal directory where `tidal.nuspec` is located.
-4. create a choco package file (.nupkg):
-
-```powershell
-choco pack
+```text
+supercollider/
+  supercollider.nuspec
+  tools/
+sc3plugins/
+  sc3plugins.nuspec
+  tools/
+superdirt/
+  superdirt.nuspec
+  tools/
+tidal/
+  tidal.nuspec
+  tools/
+scripts/
+  pack-local.ps1
 ```
 
-Successful package creation will yield a "success" message and a package file: `TidalCycles.<version>.nupkg`
+## Build all local packages
 
-4. Test package
-  - The best way to validate is with a full package install - this requires a fresh environment as all dependencies will be installed. 
-  - It is also possible to test just the PS functions by editing the tidal.nuspec and commenting or removing the major dependencies. 
-  - Note: Once you have installed a package via choco, choco will detect this and skip it the next time. 
-  - `choco install` expects a package ID, not a path to the `.nupkg` file. Point `--source` at the directory that contains the locally packed `.nupkg`.
-  - Since dependency packages are not local, include the Chocolatey Community feed as an additional source when testing on a fresh environment.
-
-From the `tidal` directory, for version 1.9.4.1:
+Run PowerShell from the repository root:
 
 ```powershell
-choco install TidalCycles --version="1.9.4.1" --source=".;https://community.chocolatey.org/api/v2/" -y
+.\scripts\pack-local.ps1
 ```
 
-Or use an absolute local source path:
+The script creates or refreshes `local-packages` and packs all four packages into it. The repository's historical `dist` directory is deliberately left untouched.
+
+Equivalent manual commands are:
 
 ```powershell
-choco install TidalCycles --version="1.9.4.1" --source="C:\path\to\tidal-chocolatey\tidal;https://community.chocolatey.org/api/v2/" -y
+New-Item -ItemType Directory -Path .\local-packages -Force | Out-Null
+Remove-Item .\local-packages\*.nupkg -ErrorAction SilentlyContinue
+
+choco pack .\supercollider\supercollider.nuspec --output-directory .\local-packages
+choco pack .\sc3plugins\sc3plugins.nuspec --output-directory .\local-packages
+choco pack .\superdirt\superdirt.nuspec --output-directory .\local-packages
+choco pack .\tidal\tidal.nuspec --output-directory .\local-packages
 ```
 
-5. Push to Chocolatey
-  - API key - available on your Account page (only required the first time you push)
-  - Push
+Expected local packages are:
+
+```text
+SuperCollider.3.14.1.nupkg
+sc3plugins.3.14.0.nupkg
+superdirt.1.7.4.nupkg
+TidalCycles.1.10.3.nupkg
+```
+
+## Test the complete stack
+
+A clean Windows VM is strongly recommended. Testing on a machine that already has old Chocolatey packages installed can hide dependency, upgrade, PATH, registry, and uninstall problems.
+
+`choco install` expects a package ID, not a path to a `.nupkg` file. Point `--source` at the directory containing all locally built packages, then add Chocolatey Community so the remaining dependencies can be resolved.
+
+From the repository root:
 
 ```powershell
-choco apikey --api-key [YOUR API_KEY_HERE] -source https://push.chocolatey.org/
-choco push <TidalCycles>.nupkg --source https://push.chocolatey.org/
+choco install TidalCycles `
+  --version="1.10.3" `
+  --source=".\local-packages;https://community.chocolatey.org/api/v2/" `
+  -y
 ```
 
-6. Resolve any Validation issues    
-  - Chocolatey will generate email messages with status. If there are any validation automation errors, you need to resolve them and re-submit (`choco pack` and `choco push`). 
-  - Validation is not immediate - it appears to be a batch process.
-  - Follow all directions carefully - the emails are dense and it is tempting to skip over important details. 
-  - Getting an admin to intervene or provide help ... "No human moderators see packages until automated checks are passed or the maintainer uses the review comments box to respond."
-  - New releases in choco require human admin approval after all the validation steps are complete. These can take several days, depending...
+Or use an absolute path:
 
+```powershell
+choco install TidalCycles `
+  --version="1.10.3" `
+  --source="C:\path\to\tidal-chocolatey\local-packages;https://community.chocolatey.org/api/v2/" `
+  -y
+```
+
+The order of sources matters: the local `local-packages` source is listed first so Chocolatey can resolve the locally maintained SuperCollider, sc3-plugins and SuperDirt packages.
+
+## What the TidalCycles package does after dependencies install
+
+`tidal/tools/chocolateyinstall.ps1`:
+
+1. verifies that Cabal is available;
+2. runs `cabal update`;
+3. runs `cabal v1-install tidal-1.10.3` and propagates failures;
+4. locates Pulsar;
+5. installs the Pulsar `tidalcycles` package with `ppm`, with PATH and `pulsar -p` fallbacks;
+6. propagates a non-zero exit code instead of silently continuing.
+
+## Dependency policy for 1.10.3
+
+The package pins the components for which version drift can materially affect the Tidal/SuperDirt stack:
+
+- GHC 9.6.1
+- Cabal Chocolatey package 3.10.1.1
+- SuperCollider 3.14.1
+- sc3-plugins 3.14.0
+- SuperDirt 1.7.4
+
+The TidalCycles Windows documentation currently recommends GHC 9.6.1 and Cabal 3.10.1.0. Chocolatey Community does not publish a package numbered 3.10.1.0; it publishes 3.10.1.1 in that release series, so this repository pins that available Chocolatey revision.
+
+Git, MSYS2 and Pulsar remain minimum-version dependencies and may resolve to newer approved Community packages. They should be pinned only when testing shows a compatibility reason to do so.
+
+## Updating SuperCollider and sc3-plugins
+
+Their Chocolatey install scripts are intentionally tied to exact upstream GitHub release tags. At install time they locate the exact expected asset and require GitHub's `sha256:` release-asset digest. If the asset name changes, the release disappears, or a valid SHA-256 digest is unavailable, installation stops rather than downloading an unverified file.
+
+When changing either version:
+
+1. update the package version in its `.nuspec`;
+2. update `$version` and `$assetName` in its `chocolateyinstall.ps1`;
+3. update dependent package version constraints;
+4. pack all local packages again;
+5. test on a clean Windows environment.
+
+## Updating SuperDirt
+
+The SuperDirt package uses SuperCollider's Quarks system. Change both the package version and the explicit Quark tag in `superdirt/tools/superdirt_install.scd`.
+
+The PowerShell wrapper must return a failure when `sclang` returns a non-zero status so Chocolatey does not report a successful package when Quark installation failed.
+
+## Publishing
+
+Do not publish TidalCycles 1.10.3 or the new component packages to Chocolatey Community until the complete local stack has passed a clean-machine install test.
+
+Before Community publication, each new package should also be reviewed against current Chocolatey moderation requirements, including verification metadata and package-specific licensing/distribution requirements.
+
+Once local testing is complete, each component package would normally need to be published before the `TidalCycles` meta-package that depends on it.

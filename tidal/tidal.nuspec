@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>TidalCycles</id>
-    <version>1.9.4.2</version>
+    <version>1.10.3</version>
     <packageSourceUrl>https://github.com/gilfuser/tidal-chocolatey/</packageSourceUrl>
     <title>TidalCycles for Windows</title>
     <owners>Alex McLean</owners>
@@ -18,10 +18,11 @@
     <tags>tidal tidalcycles livecoding audio</tags>
     <summary>TidalCycles install for Windows.</summary>
     <description>TidalCycles (or Tidal for short) is a language for live coding patterns.
-    This package installs a tested Windows stack for TidalCycles together with SuperCollider,
-    sc3-plugins, SuperDirt and Pulsar. GHC is pinned to 9.6.1, currently recommended by the
-    TidalCycles Windows documentation. Chocolatey's Cabal 3.10.1.1 package is used because it
-    is the available package revision in the recommended Cabal 3.10.1 series.
+    This package installs Tidal 1.10.3 together with a tested Windows stack including
+    SuperCollider, sc3-plugins, SuperDirt and Pulsar. GHC is pinned to 9.6.1, currently
+    recommended by the TidalCycles Windows documentation. Chocolatey's Cabal 3.10.1.1
+    package is used because it is the available package revision in the recommended
+    Cabal 3.10.1 series.
 
     Tidal does not make sound itself, but is designed for use with the SuperDirt synth,
     and can control other synths over Open Sound Control or MIDI.

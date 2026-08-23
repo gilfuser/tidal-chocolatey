@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>superdirt</id>
+    <version>1.7.4</version>
+    <packageSourceUrl>https://github.com/gilfuser/tidal-chocolatey</packageSourceUrl>
+    <title>SuperDirt</title>
+    <owners>Gil Fuser</owners>
+    <authors>Julian Rohrhuber, Alex McLean and contributors</authors>
+    <projectUrl>https://codeberg.org/musikinformatik/SuperDirt</projectUrl>
+    <licenseUrl>https://codeberg.org/musikinformatik/SuperDirt/src/branch/develop/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://codeberg.org/musikinformatik/SuperDirt</projectSourceUrl>
+    <docsUrl>https://tidalcycles.org/docs/getting-started/tidal_start/</docsUrl>
+    <tags>supercollider tidalcycles music audio</tags>
+    <summary>SuperDirt 1.7.4 for the TidalCycles Windows stack.</summary>
+    <description>Installs the SuperDirt 1.7.4 Quark, including its Quark dependencies, using SuperCollider's Quarks package manager.</description>
+    <dependencies>
+      <dependency id="git" version="2.33.1" />
+      <dependency id="supercollider" version="[3.14.1]" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

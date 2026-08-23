@@ -1,6 +1,7 @@
 # Change Log
 
-## 1.9.4.2
+## 1.10.3
+- aligned the Chocolatey package version with Tidal 1.10.3 and pinned the Cabal install to `tidal-1.10.3`
 - added local Chocolatey packages for SuperCollider 3.14.1, sc3-plugins 3.14.0, and SuperDirt 1.7.4
 - pinned SuperCollider, sc3-plugins, and SuperDirt so the TidalCycles package no longer resolves the stale Community packages from 2023
 - pinned GHC to 9.6.1, the version currently recommended by the TidalCycles Windows documentation

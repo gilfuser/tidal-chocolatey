@@ -19,8 +19,8 @@ This is a required configuration file. To update, change the version # and any o
 2. tools/chocolateyinstall.ps1
 This powershell script is run **after** all of the dependencies packages are installed - choco will manage each of them with powershell commands. The main purpose of this script is to do any final install or configuration tasks that are not accomplished by the dependency package. Tasks in this script:
   - run the tools/quarkinstall.sc file from `sclang` to install SuperDirt, Dirt-Samples, and Vowel quark
-  - install Tidal with`cabal` commands
-  - download Pulsar installer, run the installer, and run the apm command to get the TidalCycles package for Pulsar
+  - install Tidal with `cabal` commands
+  - use Pulsar's package manager (`ppm`) to install the TidalCycles package for Pulsar
   - manage additional environment variables needed for the install and post install
   - Provide instructions back to the user (note these may not get to the user if there is a script failure, depending on where it fails)
 
@@ -47,10 +47,19 @@ Successful package creation will yield a "success" message and a package file: `
   - The best way to validate is with a full package install - this requires a fresh environment as all dependencies will be installed. 
   - It is also possible to test just the PS functions by editing the tidal.nuspec and commenting or removing the major dependencies. 
   - Note: Once you have installed a package via choco, choco will detect this and skip it the next time. 
-  - Expand the source option: since there are dependency packages not local, an expanded list of the 'source' option is needed. This is NOT in the Quick Guide but is covered in the Package Creation under "Commands." 
+  - `choco install` expects a package ID, not a path to the `.nupkg` file. Point `--source` at the directory that contains the locally packed `.nupkg`.
+  - Since dependency packages are not local, include the Chocolatey Community feed as an additional source when testing on a fresh environment.
+
+From the `tidal` directory, for version 1.9.4.1:
 
 ```powershell
-choco install TidalCycles.1.9.3.nupkg --source "'.;https://community.chocolatey.org/api/v2'"
+choco install TidalCycles --version="1.9.4.1" --source=".;https://community.chocolatey.org/api/v2/" -y
+```
+
+Or use an absolute local source path:
+
+```powershell
+choco install TidalCycles --version="1.9.4.1" --source="C:\path\to\tidal-chocolatey\tidal;https://community.chocolatey.org/api/v2/" -y
 ```
 
 5. Push to Chocolatey

@@ -40,28 +40,20 @@ foreach ($gitDir in $gitDirs) {
 
 Write-Host "Installing SuperDirt 1.7.4 with $sclang"
 
-# SuperCollider's Quarks implementation invokes git. Git writes normal clone
-# progress (for example, "Cloning into ...") to stderr even when the command
-# succeeds. PowerShell 7 can promote native stderr to a terminating error when
-# $PSNativeCommandUseErrorActionPreference is enabled, which made Chocolatey
-# abort before sclang could return its real exit code. Disable that behavior
-# only for this native sclang process and validate $LASTEXITCODE ourselves.
-$hadNativePreference = Test-Path variable:PSNativeCommandUseErrorActionPreference
-if ($hadNativePreference) {
-  $previousNativePreference = $PSNativeCommandUseErrorActionPreference
-  $PSNativeCommandUseErrorActionPreference = $false
-}
+# Quarks invokes git internally. Git writes normal progress and warnings to
+# stderr, including successful clone progress and configuration deprecation
+# hints. Windows PowerShell 5.1 can convert native stderr into NativeCommandError
+# records; with Chocolatey's ErrorActionPreference=Stop this aborts the package
+# even when git/sclang are succeeding. Start-Process lets sclang inherit the
+# console streams directly, bypassing PowerShell's native stderr conversion.
+# We determine success exclusively from sclang's process exit code.
+$process = Start-Process `
+  -FilePath $sclang `
+  -ArgumentList @("`"$installScript`"") `
+  -NoNewWindow `
+  -Wait `
+  -PassThru
 
-try {
-  & $sclang $installScript
-  $sclangExitCode = $LASTEXITCODE
-}
-finally {
-  if ($hadNativePreference) {
-    $PSNativeCommandUseErrorActionPreference = $previousNativePreference
-  }
-}
-
-if ($sclangExitCode -ne 0) {
-  throw "SuperDirt installation failed with sclang exit code $sclangExitCode."
+if ($process.ExitCode -ne 0) {
+  throw "SuperDirt installation failed with sclang exit code $($process.ExitCode)."
 }

@@ -8,13 +8,15 @@ function Find-Sclang {
   $command = Get-Command sclang.exe -ErrorAction SilentlyContinue
   if ($command) { return $command.Source }
 
-  $candidates = @(
-    (Join-Path $env:ProgramFiles 'SuperCollider-*\sclang.exe'),
-    (Join-Path ${env:ProgramFiles(x86)} 'SuperCollider-*\sclang.exe')
-  )
+  $candidates = @()
+  if ($env:ProgramFiles) {
+    $candidates += Join-Path $env:ProgramFiles 'SuperCollider-*\sclang.exe'
+  }
+  if (${env:ProgramFiles(x86)}) {
+    $candidates += Join-Path ${env:ProgramFiles(x86)} 'SuperCollider-*\sclang.exe'
+  }
 
   foreach ($pattern in $candidates) {
-    if (-not $pattern) { continue }
     $found = Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue |
       Sort-Object FullName -Descending |
       Select-Object -First 1
@@ -25,9 +27,15 @@ function Find-Sclang {
 }
 
 $sclang = Find-Sclang
-$gitDir = 'C:\Program Files\Git\cmd'
-if (Test-Path $gitDir) {
-  $env:Path = "$gitDir;$env:Path"
+$gitDirs = @(
+  'C:\Program Files\Git\cmd',
+  'C:\Program Files (x86)\Git\cmd'
+)
+foreach ($gitDir in $gitDirs) {
+  if (Test-Path $gitDir) {
+    $env:Path = "$gitDir;$env:Path"
+    break
+  }
 }
 
 Write-Host "Installing SuperDirt 1.7.4 with $sclang"

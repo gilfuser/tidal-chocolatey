@@ -1,5 +1,9 @@
 $ErrorActionPreference = 'Stop'
 
+if (-not [Environment]::Is64BitOperatingSystem) {
+  throw 'sc3-plugins 3.14.0 package supports only 64-bit Windows.'
+}
+
 $packageName = 'sc3plugins'
 $version = '3.14.0'
 $assetName = 'sc3-plugins-3.14.0-Windows-64bit.zip'
@@ -18,7 +22,7 @@ if (-not $asset.digest -or $asset.digest -notmatch '^sha256:([0-9a-fA-F]{64})$')
   throw "GitHub did not provide a valid SHA-256 digest for $assetName."
 }
 
-$checksum64 = $Matches[1]
+$checksum = $Matches[1]
 $extensionsDir = Join-Path $env:LOCALAPPDATA 'SuperCollider\Extensions'
 $pluginsDir = Join-Path $extensionsDir 'SC3plugins'
 
@@ -33,10 +37,10 @@ if (Test-Path $pluginsDir) {
 
 Install-ChocolateyZipPackage `
   -PackageName $packageName `
-  -Url64bit $asset.browser_download_url `
+  -Url $asset.browser_download_url `
   -UnzipLocation $extensionsDir `
-  -Checksum64 $checksum64 `
-  -ChecksumType64 'sha256'
+  -Checksum $checksum `
+  -ChecksumType 'sha256'
 
 if (-not (Test-Path $pluginsDir)) {
   throw "sc3-plugins archive was extracted, but $pluginsDir was not created."

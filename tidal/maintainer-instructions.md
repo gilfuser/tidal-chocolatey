@@ -7,7 +7,7 @@ The repository now contains the TidalCycles meta-package plus local package defi
 - `supercollider` — SuperCollider 3.14.1
 - `sc3plugins` — sc3-plugins 3.14.0
 - `superdirt` — SuperDirt 1.7.4
-- `tidal` — the TidalCycles meta-package
+- `tidal` — TidalCycles 1.10.3 meta-package
 
 The component packages are kept separate because Chocolatey dependencies are resolved by package ID. During local testing, all generated `.nupkg` files must therefore be available from the same local source before installing `TidalCycles`.
 
@@ -54,13 +54,13 @@ choco pack .\superdirt\superdirt.nuspec --output-directory .\local-packages
 choco pack .\tidal\tidal.nuspec --output-directory .\local-packages
 ```
 
-Expected local packages for revision 1.9.4.2 are:
+Expected local packages are:
 
 ```text
 SuperCollider.3.14.1.nupkg
 sc3plugins.3.14.0.nupkg
 superdirt.1.7.4.nupkg
-TidalCycles.1.9.4.2.nupkg
+TidalCycles.1.10.3.nupkg
 ```
 
 ## Test the complete stack
@@ -73,7 +73,7 @@ From the repository root:
 
 ```powershell
 choco install TidalCycles `
-  --version="1.9.4.2" `
+  --version="1.10.3" `
   --source=".\local-packages;https://community.chocolatey.org/api/v2/" `
   -y
 ```
@@ -82,7 +82,7 @@ Or use an absolute path:
 
 ```powershell
 choco install TidalCycles `
-  --version="1.9.4.2" `
+  --version="1.10.3" `
   --source="C:\path\to\tidal-chocolatey\local-packages;https://community.chocolatey.org/api/v2/" `
   -y
 ```
@@ -95,12 +95,12 @@ The order of sources matters: the local `local-packages` source is listed first 
 
 1. verifies that Cabal is available;
 2. runs `cabal update`;
-3. runs `cabal v1-install tidal` and propagates failures;
+3. runs `cabal v1-install tidal-1.10.3` and propagates failures;
 4. locates Pulsar;
 5. installs the Pulsar `tidalcycles` package with `ppm`, with PATH and `pulsar -p` fallbacks;
 6. propagates a non-zero exit code instead of silently continuing.
 
-## Dependency policy for 1.9.4.2
+## Dependency policy for 1.10.3
 
 The package pins the components for which version drift can materially affect the Tidal/SuperDirt stack:
 
@@ -134,7 +134,7 @@ The PowerShell wrapper must return a failure when `sclang` returns a non-zero st
 
 ## Publishing
 
-Do not publish revision 1.9.4.2 or the new component packages to Chocolatey Community until the complete local stack has passed a clean-machine install test.
+Do not publish TidalCycles 1.10.3 or the new component packages to Chocolatey Community until the complete local stack has passed a clean-machine install test.
 
 Before Community publication, each new package should also be reviewed against current Chocolatey moderation requirements, including verification metadata and package-specific licensing/distribution requirements.
 

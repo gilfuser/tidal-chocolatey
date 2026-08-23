@@ -40,18 +40,18 @@ Run PowerShell from the repository root:
 .\scripts\pack-local.ps1
 ```
 
-The script creates or refreshes `dist` and packs all four packages into it.
+The script creates or refreshes `local-packages` and packs all four packages into it. The repository's historical `dist` directory is deliberately left untouched.
 
 Equivalent manual commands are:
 
 ```powershell
-New-Item -ItemType Directory -Path .\dist -Force | Out-Null
-Remove-Item .\dist\*.nupkg -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path .\local-packages -Force | Out-Null
+Remove-Item .\local-packages\*.nupkg -ErrorAction SilentlyContinue
 
-choco pack .\supercollider\supercollider.nuspec --output-directory .\dist
-choco pack .\sc3plugins\sc3plugins.nuspec --output-directory .\dist
-choco pack .\superdirt\superdirt.nuspec --output-directory .\dist
-choco pack .\tidal\tidal.nuspec --output-directory .\dist
+choco pack .\supercollider\supercollider.nuspec --output-directory .\local-packages
+choco pack .\sc3plugins\sc3plugins.nuspec --output-directory .\local-packages
+choco pack .\superdirt\superdirt.nuspec --output-directory .\local-packages
+choco pack .\tidal\tidal.nuspec --output-directory .\local-packages
 ```
 
 Expected local packages for revision 1.9.4.2 are:
@@ -74,7 +74,7 @@ From the repository root:
 ```powershell
 choco install TidalCycles `
   --version="1.9.4.2" `
-  --source=".\dist;https://community.chocolatey.org/api/v2/" `
+  --source=".\local-packages;https://community.chocolatey.org/api/v2/" `
   -y
 ```
 
@@ -83,11 +83,11 @@ Or use an absolute path:
 ```powershell
 choco install TidalCycles `
   --version="1.9.4.2" `
-  --source="C:\path\to\tidal-chocolatey\dist;https://community.chocolatey.org/api/v2/" `
+  --source="C:\path\to\tidal-chocolatey\local-packages;https://community.chocolatey.org/api/v2/" `
   -y
 ```
 
-The order of sources matters: the local `dist` source is listed first so Chocolatey can resolve the locally maintained SuperCollider, sc3-plugins and SuperDirt packages.
+The order of sources matters: the local `local-packages` source is listed first so Chocolatey can resolve the locally maintained SuperCollider, sc3-plugins and SuperDirt packages.
 
 ## What the TidalCycles package does after dependencies install
 

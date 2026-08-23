@@ -39,8 +39,29 @@ foreach ($gitDir in $gitDirs) {
 }
 
 Write-Host "Installing SuperDirt 1.7.4 with $sclang"
-& $sclang $installScript
 
-if ($LASTEXITCODE -ne 0) {
-  throw "SuperDirt installation failed with sclang exit code $LASTEXITCODE."
+# SuperCollider's Quarks implementation invokes git. Git writes normal clone
+# progress (for example, "Cloning into ...") to stderr even when the command
+# succeeds. PowerShell 7 can promote native stderr to a terminating error when
+# $PSNativeCommandUseErrorActionPreference is enabled, which made Chocolatey
+# abort before sclang could return its real exit code. Disable that behavior
+# only for this native sclang process and validate $LASTEXITCODE ourselves.
+$hadNativePreference = Test-Path variable:PSNativeCommandUseErrorActionPreference
+if ($hadNativePreference) {
+  $previousNativePreference = $PSNativeCommandUseErrorActionPreference
+  $PSNativeCommandUseErrorActionPreference = $false
+}
+
+try {
+  & $sclang $installScript
+  $sclangExitCode = $LASTEXITCODE
+}
+finally {
+  if ($hadNativePreference) {
+    $PSNativeCommandUseErrorActionPreference = $previousNativePreference
+  }
+}
+
+if ($sclangExitCode -ne 0) {
+  throw "SuperDirt installation failed with sclang exit code $sclangExitCode."
 }

@@ -1,5 +1,9 @@
 $ErrorActionPreference = 'Stop'
 
+if (-not [Environment]::Is64BitOperatingSystem) {
+  throw 'SuperCollider 3.14.1 package supports only 64-bit Windows.'
+}
+
 $packageName = 'supercollider'
 $version = '3.14.1'
 $assetName = 'SuperCollider-3.14.1_Release-x64-VS-426edf6.exe'
@@ -18,15 +22,15 @@ if (-not $asset.digest -or $asset.digest -notmatch '^sha256:([0-9a-fA-F]{64})$')
   throw "GitHub did not provide a valid SHA-256 digest for $assetName."
 }
 
-$checksum64 = $Matches[1]
+$checksum = $Matches[1]
 
 $packageArgs = @{
   packageName    = $packageName
   fileType       = 'EXE'
-  url64bit       = $asset.browser_download_url
+  url            = $asset.browser_download_url
   softwareName   = "SuperCollider Version $version"
-  checksum64     = $checksum64
-  checksumType64 = 'sha256'
+  checksum       = $checksum
+  checksumType   = 'sha256'
   validExitCodes = @(0, 3010, 1641)
   silentArgs     = '/S'
 }

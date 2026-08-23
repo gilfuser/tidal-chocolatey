@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.9.4.1
+- fixed the Pulsar package installation to use `ppm` instead of the retired Atom `apm` command
+- added explicit failure handling for `cabal update`, Tidal installation, and Pulsar package installation
+- added validation that Pulsar, Cabal, and Pulsar Package Manager can be found before continuing
+- added fallbacks for bundled `ppm`, `ppm` on PATH, and `pulsar -p`
+- updated package source and release-notes metadata to point to the maintained fork
+- kept the dependency versions unchanged in this revision so installer fixes can be tested separately from the dependency modernization work
+
 ## 1.9.4
 - set dependencies to exact versions with [] for ghc, cabal, msys2 in tidal.nuspec
 - changed download link for pulsar installer in powershell

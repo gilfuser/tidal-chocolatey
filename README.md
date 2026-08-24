@@ -1,39 +1,69 @@
 # Chocolatey Packages for TidalCycles
-This repo hosts code for all Chocolatey package related to the TidalCycles live-coding environment.
 
-## TidalCycles Installation (for new users)
+This repository hosts the Chocolatey packaging used by the TidalCycles Windows installer.
 
-Make sure you have Chocolatey installed. See https://chocolatey.org for more information.
+## TidalCycles installation
 
-1. Run Windows PowerShell with admin privileges (which you can find by holding down the windows key and pressing x), and then execute this command:
+For the public Chocolatey package:
 
-```bash
+```powershell
 choco install tidalcycles
 ```
 
-2. Review output and check logs for any errors. Some install steps may have failed or remain in complete. 
+## Temporary component-fork integration
 
-3. Start SuperCollider
+While the SuperCollider, sc3-plugins and SuperDirt package updates are waiting for their upstream PRs to be merged and published on Chocolatey Community, the `integrate/component-forks-submodules` branch uses the tested package forks as Git submodules.
 
-4. Start SuperDirt:
+Clone it with submodules:
 
+```powershell
+git clone --branch integrate/component-forks-submodules --recurse-submodules https://github.com/gilfuser/tidal-chocolatey.git
+cd tidal-chocolatey
 ```
-// Within the SuperCollider IDE, type and put your cursor on this code, then Shift+Enter
-SuperDirt.start
+
+If the repository was cloned without `--recurse-submodules`:
+
+```powershell
+git submodule update --init --recursive
 ```
 
-4. Start Pulsar (Start Button -> Pulsar)
+Build the local package source:
 
-6. Write Tidal code!
+```powershell
+.\scripts\pack-local.ps1
+```
+
+This creates local packages for SuperCollider 3.14.1, sc3-plugins 3.14.0, SuperDirt 1.7.4 and TidalCycles 1.10.3 under `local-packages`.
+
+Install the local TidalCycles package with the public Chocolatey feed as fallback for the remaining dependencies:
+
+```powershell
+choco install TidalCycles `
+  --version="1.10.3" `
+  --source=".\local-packages;https://community.chocolatey.org/api/v2/" `
+  -y
+```
+
+The submodules are temporary. Once the component PRs are merged and their updated packages are available on Chocolatey Community, the TidalCycles package can return to depending only on the public component packages.
+
+## After installation
+
+Start SuperCollider and evaluate:
+
+```supercollider
+SuperDirt.start;
+```
+
+Then start Pulsar and evaluate Tidal code, for example:
 
 ```haskell
--- type and put your cursor on this code, then Shift+Enter
 d1 $ sound "bd sn"
 ```
 
----
-# Contents of this repository
+## Repository contents
 
-- tidal: contains files used by the TidalCycles package in Chocolatey
-- tidal > maintainer-instructions.md: details on how to manage and update the package
-
+- `tidal/`: TidalCycles Chocolatey package
+- `components/sc-chocolatey/`: temporary submodule containing the SuperCollider and sc3-plugins package updates
+- `components/superdirt-chocolatey/`: temporary submodule containing the SuperDirt package update
+- `scripts/pack-local.ps1`: builds the complete local Chocolatey source
+- `tidal/maintainer-instructions.md`: package maintenance notes

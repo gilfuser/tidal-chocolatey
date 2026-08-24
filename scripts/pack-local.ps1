@@ -7,14 +7,26 @@ if (-not (Get-Command choco.exe -ErrorAction SilentlyContinue)) {
   throw 'choco.exe was not found on PATH.'
 }
 
+$requiredSubmodules = @(
+  'components\sc-chocolatey',
+  'components\superdirt-chocolatey'
+)
+
+foreach ($relativePath in $requiredSubmodules) {
+  $path = Join-Path $repoRoot $relativePath
+  if (-not (Test-Path $path)) {
+    throw "Submodule not initialized: $relativePath. Run: git submodule update --init --recursive"
+  }
+}
+
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 Get-ChildItem -Path $outputDir -Filter '*.nupkg' -ErrorAction SilentlyContinue |
   Remove-Item -Force
 
 $packages = @(
-  'supercollider\supercollider.nuspec',
-  'sc3plugins\sc3plugins.nuspec',
-  'superdirt\superdirt.nuspec',
+  'components\sc-chocolatey\supercollider\supercollider-chocolatey.nuspec',
+  'components\sc-chocolatey\sc3-plugins\sc3-plugins.nuspec',
+  'components\superdirt-chocolatey\superdirt\superdirt.nuspec',
   'tidal\tidal.nuspec'
 )
 

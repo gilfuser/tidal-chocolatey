@@ -1,0 +1,8 @@
+[submodule "components/sc-chocolatey"]
+	path = components/sc-chocolatey
+	url = https://github.com/gilfuser/sc-chocolatey.git
+	branch = update/sc3-plugins-3.14.0
+[submodule "components/superdirt-chocolatey"]
+	path = components/superdirt-chocolatey
+	url = https://github.com/gilfuser/superdirt-chocolatey.git
+	branch = update/superdirt-1.7.4

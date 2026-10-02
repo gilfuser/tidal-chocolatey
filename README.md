@@ -33,7 +33,7 @@ This repository also contains an updated Windows stack with:
 Until these updated component packages are published in Chocolatey Community,
 build them locally first.
 
-Clone this repository and switch to the modernization branch:
+Clone this repository:
 
 ```powershell
 git clone https://github.com/gilfuser/tidal-chocolatey.git

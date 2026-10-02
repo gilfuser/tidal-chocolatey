@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $packageName = 'tidalcycles'
+$tidalVersion = '1.10.3'
 
 function Invoke-NativeCommand {
     param(
@@ -32,15 +33,17 @@ $machinePath = [System.Environment]::GetEnvironmentVariable('Path', 'Machine')
 $userPath = [System.Environment]::GetEnvironmentVariable('Path', 'User')
 $env:Path = "$machinePath;$userPath;$pulsarPath"
 
-# Install the Tidal Haskell library. The official Windows documentation still
-# recommends the v1-install command for the Chocolatey installation path.
+# Install the Tidal Haskell library. Keep the Chocolatey package version and
+# the installed Hackage package version aligned for reproducible installs.
+# The official Windows documentation still recommends the v1-install command
+# for the Chocolatey installation path.
 if (-not (Get-Command cabal -ErrorAction SilentlyContinue)) {
     throw 'cabal was not found on PATH after installing the Chocolatey dependencies.'
 }
 
-Write-Host 'Installing the Tidal Haskell library. This may take time.'
+Write-Host "Installing Tidal Haskell library $tidalVersion. This may take time."
 Invoke-NativeCommand -Command 'cabal' -Arguments @('update') -Description 'cabal update'
-Invoke-NativeCommand -Command 'cabal' -Arguments @('v1-install', 'tidal') -Description 'Tidal Haskell library installation'
+Invoke-NativeCommand -Command 'cabal' -Arguments @('v1-install', "tidal-$tidalVersion") -Description "Tidal $tidalVersion Haskell library installation"
 
 # Install the TidalCycles package for Pulsar. Pulsar uses ppm (Pulsar Package
 # Manager), not Atom's retired apm command. Prefer the ppm bundled with the
@@ -83,6 +86,6 @@ else {
 }
 
 Write-Host ''
-Write-Host 'TidalCycles installation steps completed successfully.'
+Write-Host "TidalCycles $tidalVersion installation steps completed successfully."
 Write-Host 'Review the Start Tidal documentation to configure SuperDirt and start Tidal:'
 Write-Host 'https://tidalcycles.org/docs/getting-started/tidal_start/'

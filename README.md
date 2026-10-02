@@ -1,39 +1,115 @@
 # Chocolatey Packages for TidalCycles
-This repo hosts code for all Chocolatey package related to the TidalCycles live-coding environment.
 
-## TidalCycles Installation (for new users)
+This repository contains Chocolatey packages for the TidalCycles live-coding environment on Windows.
 
-Make sure you have Chocolatey installed. See https://chocolatey.org for more information.
+## TidalCycles Installation
 
-1. Run Windows PowerShell with admin privileges (which you can find by holding down the windows key and pressing x), and then execute this command:
+### Stable Chocolatey release
 
-```bash
-choco install tidalcycles
+The current public Chocolatey package can be installed with:
+
+```powershell
+choco install tidalcycles -y
 ```
 
-2. Review output and check logs for any errors. Some install steps may have failed or remain in complete. 
+This installs the version currently published in Chocolatey Community.
 
-3. Start SuperCollider
+Chocolatey package page:
 
-4. Start SuperDirt:
+https://community.chocolatey.org/packages/TidalCycles
 
+### Test the updated TidalCycles 1.10.3 stack
+
+This repository also contains an updated Windows stack with:
+
+- TidalCycles 1.10.3
+- GHC 9.6.1
+- Cabal 3.10.1.1
+- SuperCollider 3.14.1
+- sc3-plugins 3.14.0
+- SuperDirt 1.7.4
+- Pulsar with the `tidalcycles` package
+
+Until these updated component packages are published in Chocolatey Community,
+build them locally first.
+
+Clone this repository:
+
+```powershell
+git clone https://github.com/gilfuser/tidal-chocolatey.git
+cd tidal-chocolatey
 ```
-// Within the SuperCollider IDE, type and put your cursor on this code, then Shift+Enter
-SuperDirt.start
+
+Build all locally maintained Chocolatey packages:
+
+```powershell
+.\scripts\pack-local.ps1
 ```
 
-4. Start Pulsar (Start Button -> Pulsar)
+Then install TidalCycles, using the local packages first and Chocolatey Community
+for the remaining dependencies:
 
-6. Write Tidal code!
+```powershell
+choco install TidalCycles `
+  --version="1.10.3" `
+  --source=".\local-packages;https://community.chocolatey.org/api/v2/" `
+  -y
+```
+
+The local packages include:
+
+```text
+SuperCollider 3.14.1
+sc3plugins 3.14.0
+superdirt 1.7.4
+TidalCycles 1.10.3
+```
+
+Other dependencies such as GHC, Cabal, Git, MSYS2 and Pulsar are resolved through
+Chocolatey Community.
+
+## Starting TidalCycles
+
+After installation:
+
+1. Start SuperCollider.
+2. Evaluate:
+
+```supercollider
+SuperDirt.start;
+```
+
+3. Start Pulsar.
+4. Open a Tidal file and evaluate:
 
 ```haskell
--- type and put your cursor on this code, then Shift+Enter
-d1 $ sound "bd sn"
+d1 $ sound "bd sd"
 ```
 
----
-# Contents of this repository
+5. Stop playback with:
 
-- tidal: contains files used by the TidalCycles package in Chocolatey
-- tidal > maintainer-instructions.md: details on how to manage and update the package
+```haskell
+hush
+```
 
+## More information
+
+TidalCycles:
+
+https://tidalcycles.org/
+
+SuperCollider:
+
+https://supercollider.github.io/
+
+Pulsar:
+
+https://pulsar-edit.dev/
+
+Chocolatey:
+
+https://chocolatey.org/
+
+For detailed package maintenance, build and testing instructions, see:
+
+[tidal/maintainer-instructions.md](tidal/maintainer-instructions.md)

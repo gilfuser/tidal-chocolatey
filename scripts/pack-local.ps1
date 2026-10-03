@@ -12,6 +12,7 @@ Get-ChildItem -Path $outputDir -Filter '*.nupkg' -ErrorAction SilentlyContinue |
   Remove-Item -Force
 
 $packages = @(
+  'asio4all\asio4all.nuspec',
   'supercollider\supercollider.nuspec',
   'sc3plugins\sc3plugins.nuspec',
   'superdirt\superdirt.nuspec',

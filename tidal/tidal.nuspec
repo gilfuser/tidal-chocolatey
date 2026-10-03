@@ -31,6 +31,7 @@
     <dependency id="chocolatey" version="1.2.1"/>
     <dependency id="chocolatey-core.extension" version="1.4.0"/>
     <dependency id="git" version="2.33.1"/>
+    <dependency id="asio4all" version="[2.22.0]" />
     <dependency id="supercollider" version="[3.14.1]" />
     <dependency id="sc3plugins" version="[3.14.0]"/>
     <dependency id="superdirt" version="[1.7.4]"/>

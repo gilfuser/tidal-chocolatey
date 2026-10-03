@@ -16,7 +16,7 @@ This installs the version currently published in Chocolatey Community.
 
 Chocolatey package page:
 
-https://community.chocolatey.org/packages/TidalCycles
+<https://community.chocolatey.org/packages/TidalCycles>
 
 ### Test the updated TidalCycles 1.10.3 stack
 
@@ -28,6 +28,7 @@ This repository also contains an updated Windows stack with:
 - SuperCollider 3.14.1
 - sc3-plugins 3.14.0
 - SuperDirt 1.7.4
+- ASIO4ALL 2.22
 - Pulsar with the `tidalcycles` package
 
 Until these updated component packages are published in Chocolatey Community,
@@ -73,42 +74,49 @@ Chocolatey Community.
 After installation:
 
 1. Start SuperCollider.
-2. Evaluate:
 
-```supercollider
-SuperDirt.start;
-```
+   TidalCycles configures SuperCollider to start SuperDirt automatically.
 
-3. Start Pulsar.
-4. Open a Tidal file and evaluate:
+   On Windows, ASIO4ALL is installed and selected automatically when available.
 
-```haskell
-d1 $ sound "bd sd"
-```
+2. Start Pulsar.
 
-5. Stop playback with:
+3. Open a Tidal file and evaluate:
 
-```haskell
-hush
-```
+   ```haskell
+   d1 $ sound "bd sd"
+   ```
+
+4. Stop playback with:
+
+   ```haskell
+   hush
+   ```
+
+The managed SuperCollider startup configuration:
+
+- increases the server resources recommended for SuperDirt;
+- starts eight SuperDirt orbits on port 57120;
+- uses lazy sample loading;
+- selects ASIO4ALL automatically when it is available.
 
 ## More information
 
 TidalCycles:
 
-https://tidalcycles.org/
+<https://tidalcycles.org/>
 
 SuperCollider:
 
-https://supercollider.github.io/
+<https://supercollider.github.io/>
 
 Pulsar:
 
-https://pulsar-edit.dev/
+<https://pulsar-edit.dev/>
 
 Chocolatey:
 
-https://chocolatey.org/
+<https://chocolatey.org/>
 
 For detailed package maintenance, build and testing instructions, see:
 

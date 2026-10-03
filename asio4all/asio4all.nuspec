@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>asio4all</id>
+    <version>2.22.0</version>
+    <packageSourceUrl>https://github.com/gilfuser/tidal-chocolatey</packageSourceUrl>
+    <title>ASIO4ALL</title>
+    <owners>Gil Fuser</owners>
+    <authors>tippach engineering</authors>
+    <projectUrl>https://asio4all.org/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>asio audio driver asio4all tidalcycles supercollider</tags>
+    <summary>ASIO4ALL 2.22 universal ASIO driver for Windows.</summary>
+    <description>Installs ASIO4ALL 2.22 from the official ASIO4ALL website for use with the TidalCycles and SuperCollider Windows stack.</description>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

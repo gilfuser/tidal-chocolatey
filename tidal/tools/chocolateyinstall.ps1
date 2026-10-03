@@ -84,7 +84,49 @@ else {
         }
     }
 }
+# Configure SuperCollider startup for TidalCycles.
+$superColliderDir = Join-Path $env:LOCALAPPDATA 'SuperCollider'
+$startupPath = Join-Path $superColliderDir 'startup.scd'
+$startupTemplate = Join-Path $PSScriptRoot 'tidal_startup.scd'
 
+$startMarker = '// BEGIN TidalCycles Chocolatey startup'
+$endMarker = '// END TidalCycles Chocolatey startup'
+
+New-Item -ItemType Directory -Path $superColliderDir -Force | Out-Null
+
+$managedBlock = [System.IO.File]::ReadAllText($startupTemplate)
+
+if (Test-Path $startupPath) {
+    $startupContent = [System.IO.File]::ReadAllText($startupPath)
+
+    $pattern = '(?ms)^' +
+        [regex]::Escape($startMarker) +
+        '.*?^' +
+        [regex]::Escape($endMarker) +
+        '\s*\r?\n?'
+
+    $startupContent = [regex]::Replace($startupContent, $pattern, '')
+    $startupContent = $startupContent.TrimEnd()
+
+    if ($startupContent.Length -gt 0) {
+        $startupContent += [Environment]::NewLine +
+            [Environment]::NewLine
+    }
+
+    $startupContent += $managedBlock
+}
+else {
+    $startupContent = $managedBlock
+}
+
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText(
+    $startupPath,
+    $startupContent.TrimEnd() + [Environment]::NewLine,
+    $utf8NoBom
+)
+
+Write-Host "Configured SuperCollider startup: $startupPath"
 Write-Host ''
 Write-Host "TidalCycles $tidalVersion installation steps completed successfully."
 Write-Host 'Review the Start Tidal documentation to configure SuperDirt and start Tidal:'

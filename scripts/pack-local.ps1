@@ -13,6 +13,7 @@ Get-ChildItem -Path $outputDir -Filter '*.nupkg' -ErrorAction SilentlyContinue |
 
 $packages = @(
   'asio4all\asio4all.nuspec',
+  'cabal\cabal.nuspec',
   'supercollider\supercollider.nuspec',
   'sc3plugins\sc3plugins.nuspec',
   'superdirt\superdirt.nuspec',

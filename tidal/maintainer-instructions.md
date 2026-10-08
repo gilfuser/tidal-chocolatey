@@ -4,6 +4,7 @@ Instructions and explanation for how to make updates to the TidalCycles Chocolat
 
 The repository now contains the TidalCycles meta-package plus local package definitions for the Windows components that are stale in Chocolatey Community:
 
+- `cabal` — Cabal 3.10.1.1 with a Windows profile-path compatibility fix
 - `supercollider` — SuperCollider 3.14.1
 - `sc3plugins` — sc3-plugins 3.14.0
 - `superdirt` — SuperDirt 1.7.4
@@ -16,6 +17,10 @@ Chocolatey package documentation: https://docs.chocolatey.org/en-us/create/
 ## Package layout
 
 ```text
+cabal/
+  cabal.nuspec
+  LICENSE.txt
+  tools/
 supercollider/
   supercollider.nuspec
   tools/
@@ -40,7 +45,7 @@ Run PowerShell from the repository root:
 .\scripts\pack-local.ps1
 ```
 
-The script creates or refreshes `local-packages` and packs all four packages into it. The repository's historical `dist` directory is deliberately left untouched.
+The script creates or refreshes `local-packages` and packs all locally maintained packages into it. The repository's historical `dist` directory is deliberately left untouched.
 
 Equivalent manual commands are:
 
@@ -48,6 +53,7 @@ Equivalent manual commands are:
 New-Item -ItemType Directory -Path .\local-packages -Force | Out-Null
 Remove-Item .\local-packages\*.nupkg -ErrorAction SilentlyContinue
 
+choco pack .\cabal\cabal.nuspec --output-directory .\local-packages
 choco pack .\supercollider\supercollider.nuspec --output-directory .\local-packages
 choco pack .\sc3plugins\sc3plugins.nuspec --output-directory .\local-packages
 choco pack .\superdirt\superdirt.nuspec --output-directory .\local-packages
@@ -57,6 +63,7 @@ choco pack .\tidal\tidal.nuspec --output-directory .\local-packages
 Expected local packages are:
 
 ```text
+cabal.3.10.1.1.nupkg
 SuperCollider.3.14.1.nupkg
 sc3plugins.3.14.0.nupkg
 superdirt.1.7.4.nupkg
@@ -87,7 +94,7 @@ choco install TidalCycles `
   -y
 ```
 
-The order of sources matters: the local `local-packages` source is listed first so Chocolatey can resolve the locally maintained SuperCollider, sc3-plugins and SuperDirt packages.
+The order of sources matters: the local `local-packages` source is listed first so Chocolatey can resolve the locally maintained Cabal, SuperCollider, sc3-plugins and SuperDirt packages.
 
 ## What the TidalCycles package does after dependencies install
 

@@ -47,6 +47,12 @@ Build all locally maintained Chocolatey packages:
 .\scripts\pack-local.ps1
 ```
 
+If PowerShell blocks local scripts because of the execution policy, run this invocation instead:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\pack-local.ps1
+```
+
 Then install TidalCycles, using the local packages first and Chocolatey Community
 for the remaining dependencies:
 
@@ -60,14 +66,17 @@ choco install TidalCycles `
 The local packages include:
 
 ```text
+ASIO4ALL 2.22
+Cabal 3.10.1.1
 SuperCollider 3.14.1
 sc3plugins 3.14.0
 superdirt 1.7.4
 TidalCycles 1.10.3
 ```
 
-Other dependencies such as GHC, Cabal, Git, MSYS2 and Pulsar are resolved through
-Chocolatey Community.
+The local Cabal package includes a compatibility fix for Windows user-profile paths
+that contain spaces. Other dependencies such as GHC, Git, MSYS2 and Pulsar are
+resolved through Chocolatey Community.
 
 ## Starting TidalCycles
 
